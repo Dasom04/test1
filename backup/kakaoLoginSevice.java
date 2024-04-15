@@ -23,8 +23,40 @@ public class LoginService {
         String accessToken = getKakaoAccessToken(params);
         log.info("access_token: {}", accessToken);
 
+        // 엑세스 토큰으로 사용자 정보 가져오기
+        KakaoUserResponseDTO dto = getKakaoAccessToken(accessToken);
+
 
     }
+
+    private KakaoResponseDTO getKakaoUserInfo(String accessToken) {
+        String requestUri = "https://kapi.kakao.com/v2/user/me";
+
+        // 요청 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bear " + accessToken);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // 요청 보내기
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<KakaoUserResponsDTO> responseEntity = template.exchage(
+                requestUri,
+                HttpMethod.POST,
+                new HttpEntity<>(headers),
+                KakaoUserResponsDTO.class
+        );
+
+        KakaoUserResponseDTO. responseJSON = responseEntity.getBody();
+        log.info("응답 데이터: {}", responseJSON);
+
+        return responseJSON;
+
+
+    }
+
+
+
+
 
     // 토큰 발급 요청
     private String getKakaoAccessToken(Map<String, String> requestParam) {
